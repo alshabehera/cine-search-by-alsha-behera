@@ -25,13 +25,9 @@ const MovieToSearch = () => {
       );
 
       if (response.data.Response === "False") {
-        if (response.data.Error === "Incorrect IMDb ID.") {
-          setError("Please type an exciting movie.");
-        } else {
-          setError(response.data.Error);
-        }
+        setError(response.data.Error || "No movies found.");
       } else {
-        setMovieList(response.data.Search);
+        setMovieList(response.data.Search.reverse());
       }
     } catch (e) {
       setError("Something went wrong.");
@@ -41,8 +37,7 @@ const MovieToSearch = () => {
     }
   };
 
-  // Use the custom hook
-  const debouncedFetchMovies = useDebounce(fetchMovies, 3000);
+  const debouncedFetchMovies = useDebounce(fetchMovies, 700);
 
   const handleChange = e => {
     const value = e.target.value;
@@ -67,14 +62,15 @@ const MovieToSearch = () => {
     <div className="mt-8 flex h-screen w-full flex-col items-center bg-gradient-to-b text-white">
       <div className="relative mb-1 mt-5 w-full max-w-lg">
         <Input
+          aria-label="Search for movies"
           className="w-full rounded-lg p-4 pr-10 text-gray-800 shadow-lg focus:ring-2 focus:ring-blue-500"
-          disabled={isLoading}
           placeholder="Search for movies..."
           value={query}
           onChange={handleChange}
         />
         {query && (
           <Close
+            aria-label="Clear search"
             className="absolute right-4 top-1/2 -translate-y-1/2 transform cursor-pointer text-gray-800 hover:text-gray-600"
             size={24}
             onClick={handleClear}
@@ -86,14 +82,18 @@ const MovieToSearch = () => {
       ) : (
         <div className="no-scrollbar mt-6 flex h-full w-full max-w-6xl flex-wrap justify-center gap-8 overflow-y-auto">
           {error ? (
-            <h2 className="text-red-500">{error}</h2>
+            <h2 className="mt-4 text-red-500">{error}</h2>
           ) : (
             <>
-              {movieList &&
-                movieList.length > 0 &&
-                movieList
-                  .reverse()
-                  .map(itm => <MoviePreviewCard info={itm} key={itm.imdbID} />)}
+              {movieList && movieList.length > 0 ? (
+                movieList.map(itm => (
+                  <MoviePreviewCard info={itm} key={itm.imdbID} />
+                ))
+              ) : (
+                <h2 className="text-gray-500">
+                  No movies found for your search.
+                </h2>
+              )}
             </>
           )}
         </div>
