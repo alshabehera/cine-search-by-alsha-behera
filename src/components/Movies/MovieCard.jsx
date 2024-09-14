@@ -7,16 +7,10 @@ import { useMovie } from "../../store/MovieStore";
 const MovieCard = () => {
   const { currentMovie } = useMovie();
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (currentMovie) {
-      setLoading(true);
-      const timer = setTimeout(() => setLoading(false), 100);
-
-      return () => clearTimeout(timer);
+      setLoading(false);
     }
-
-    return () => {};
   }, [currentMovie]);
 
   if (!currentMovie) {
