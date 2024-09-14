@@ -21,7 +21,7 @@ const MoviePreviewCard = ({ info, extrainfo }) => {
         onClick={handleClick}
       >
         <img
-          alt=""
+          alt="Movie Poster"
           className="h-[70%] w-[100%] rounded-sm object-cover shadow-lg"
           src={info && info.Poster}
         />
